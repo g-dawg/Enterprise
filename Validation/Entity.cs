@@ -1,24 +1,19 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace Validation
 {
     public class Entity : EntityBase
     {
-        private List<string> validationErrors = new List<string>();
+        private List<ValidationResult> validationErrors = new List<ValidationResult>();
 
         public override bool IsValid
         {
-            get
-            {
-                if (ValidationErrors.Count > 0)
-                {
-                    return false;
-                }
-                return true;
-            }
+            get { return Validate(); }
         }
-        public override List<string> ValidationErrors
+
+        public override List<ValidationResult> ValidationErrors
         {
             get { return validationErrors; }
             protected set { validationErrors = value; }
@@ -26,21 +21,20 @@ namespace Validation
 
         public override bool Validate()
         {
-            ValidateAttributes();
-            ValidateBusinessRules();
+            ValidationErrors.AddRange(ValidateAttributes());
+            ValidationErrors.AddRange(ValidateBusinessRules());
 
-            return IsValid;
+            return !ValidationErrors.Any();
         }
 
-        private void ValidateAttributes()
+        private List<ValidationResult> ValidateAttributes()
         {
-            var result = ValidationHelper.ValidateEntity(this);
-            ValidationErrors.AddRange(result.Errors.Select(x=>x.ErrorMessage));
+            return  ValidationHelper.ValidateEntity(this);
         }
 
-        protected virtual void ValidateBusinessRules()
+        protected virtual List<ValidationResult> ValidateBusinessRules()
         {
-
+            return new List<ValidationResult>();
         }
     }
 }

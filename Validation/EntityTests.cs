@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
 using System.ComponentModel.DataAnnotations;
 
 namespace Validation
@@ -10,9 +11,9 @@ namespace Validation
         [Required]
         public int? Test { get; set; }
 
-        protected override void ValidateBusinessRules()
+        protected override List<ValidationResult> ValidateBusinessRules()
         {
-            base.ValidateBusinessRules();
+            return base.ValidateBusinessRules();
         }
     }
 
@@ -25,7 +26,7 @@ namespace Validation
             //Arrange
             var pod = new Podcast();
             //Act
-            pod.Validate();
+
             //Assert
             Assert.False(pod.IsValid);
         }
